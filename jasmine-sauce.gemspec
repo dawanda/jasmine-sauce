@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{jasmine-sauce}
-  s.version = "0.0.1"
+  s.version = "0.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Eric Allen", "Chad Wooley"]
-  s.date = %q{2011-02-07}
+  s.authors = ["Eric Allen"]
+  s.date = %q{2011-02-17}
   s.summary = %q{Jasmine + Sauce OnDemand}
   s.description = %q{Adapter to run Jasmine tests using browsers in Sauce OnDemand}
   s.email = %q{eric@hackerengineer.net}
@@ -22,5 +22,6 @@ Gem::Specification.new do |s|
   ]
 
   s.add_runtime_dependency("sauce", [">= 0.16.2"])
+  s.add_runtime_dependency("jasmine", [">= 1.0.1.1"])
 end
 

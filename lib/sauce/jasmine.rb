@@ -1,0 +1,1 @@
+require 'sauce/jasmine/config'

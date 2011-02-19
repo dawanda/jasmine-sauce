@@ -9,7 +9,7 @@ Rake::TestTask.new(:test) do |test|
 end
 
 task :build do
-  system "gem build jsunit-sauce.gemspec"
+  system "gem build jasmine-sauce.gemspec"
 end
 
 task :push => :build do
