@@ -11,6 +11,6 @@ Getting Started
 
 1. Add jasmine-sauce to your Gemfile
 2. bundle install
-3. bundle exec sauce config <YOUR_SAUCE_USENRAME> <YOUR_SAUCE_PASSWORD>
+3. bundle exec sauce config <YOUR_SAUCE_USENRAME> <YOUR_SAUCE_API_KEY>
 4. rails generate sauce:jasmine
 5. rake jasmine:ci:sauce
