@@ -3,26 +3,31 @@ require 'jasmine/selenium_driver'
 module Sauce
   module Jasmine
     class SeleniumDriver < ::Jasmine::SeleniumDriver
-      def initialize(browser, host, port)
+      def initialize(browser, os, version, host, port, sauce_connect, base_url = nil)
         host = host[7..-1] if host =~ /^http:\/\//
         @host = host
         @port = port
-        @tunnel_domain = "#{rand(10000)}.jasmine.test"
+        @sauce_connect = sauce_connect
+        base_url ||= "#{rand(10000)}.jasmine.test"
         @driver = Sauce::Selenium.new(:browser => browser,
-                                      :browser_url => "http://#{@tunnel_domain}",
+                                      :os => os,
+                                      :browser_version => version,
+                                      :browser_url => base_url,
                                       :job_name => "Jasmine",
-                                      :'record-video' => false,
-                                      :'record-screenshots' => false)
+                                      :'record-video' => true,
+                                      :'record-screenshots' => true)
       end
 
       def connect
-        puts "Setting up Sauce Connect..."
-        @connection = Sauce::Connect.new(:domain => @tunnel_domain,
-                                         :host => @host,
-                                         :port => @port,
-                                         :quiet => true)
-        @connection.wait_until_ready
-        puts "Sauce Connect ready."
+        if @sauce_connect
+          puts "Setting up Sauce Connect..."
+          @connection = Sauce::Connect.new(:domain => @tunnel_domain,
+                                           :host => @host,
+                                           :port => @port,
+                                           :quiet => true)
+          @connection.wait_until_ready
+          puts "Sauce Connect ready."
+        end
         super
       end
 
