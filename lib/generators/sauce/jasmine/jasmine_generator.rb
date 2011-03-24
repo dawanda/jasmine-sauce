@@ -10,7 +10,6 @@ module Sauce
       end
       
       def copy
-        directory "spec"
         directory "lib"
       end
     end

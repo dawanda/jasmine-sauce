@@ -29,32 +29,41 @@ module Sauce
       def run_tests
         puts "running tests..."
         browsers = Sauce::Config.new.browsers
-        results = []
-        threads = []
-        browsers.each do |browser_spec|
+        results = {}
+
+        threads = browsers.map do |browser_spec|
           browser_string = browser_spec.join('/')
-          threads << Thread.new do
+          Thread.new do
             begin
               result = run_tests_in_browser(*browser_spec)
-              puts "Suite done on #{browser_string}"
+              puts "Suite finished on #{browser_string}"
               Thread.exclusive do
-                results << result
+                results[browser_string] << result
               end
             rescue => e
-              puts "Error running suite on #{browser_string}: #{e}"
+              results[browser_string] = e
             end
           end
         end
         threads.each(&:join)
 
         success = results.all? do |run_result|
-          run_result.values.all? {|suite_result| suite_result['result'] == "passed"}
+          if run_result.respond_to? :values
+            run_result.values.all? {|suite_result| suite_result['result'] == "passed"}
+          else # exception
+            false
+          end
         end
         if success
           puts "Success!"
         else
           puts "Failure:"
-          p results
+          results.each do |browser_string, result|
+            puts "#{browser_string}:"
+            p result
+            puts
+            puts
+          end
           at_exit { exit!(1) }
         end
       end
@@ -62,6 +71,7 @@ module Sauce
       def teardown
         puts "Shutting down Sauce Connect..."
         @tunnel.disconnect
+        puts "Sauce Connect shut down"
       end
 
       def run_tests_in_browser(os, browser, browser_version)
@@ -69,7 +79,7 @@ module Sauce
         driver.connect
         begin
           while !driver.tests_have_finished?
-            sleep 0.1
+            sleep 1.0
           end
           result = driver.test_results
         ensure
