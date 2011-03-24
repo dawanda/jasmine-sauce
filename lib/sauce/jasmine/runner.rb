@@ -17,18 +17,36 @@ module Sauce
 
       def setup
         @server.start
+        puts "Setting up Sauce Connect..."
         @tunnel = Sauce::Connect.new(:domain => @config.tunnel_domain,
                                          :host => @server.host,
                                          :port => @server.port,
                                          :quiet => @config.quiet_tunnel?)
         @tunnel.wait_until_ready
+        puts "Sauce Connect ready"
       end
       
       def run_tests
         puts "running tests..."
-        results = Sauce::Config.new.browsers.map do |browser_spec|
-          run_tests_in_browser(*browser_spec)
+        browsers = Sauce::Config.new.browsers
+        results = []
+        threads = []
+        browsers.each do |browser_spec|
+          browser_string = browser_spec.join('/')
+          threads << Thread.new do
+            begin
+              result = run_tests_in_browser(*browser_spec)
+              puts "Suite done on #{browser_string}"
+              Thread.exclusive do
+                results << result
+              end
+            rescue => e
+              puts "Error running suite on #{browser_string}: #{e}"
+            end
+          end
         end
+        threads.each(&:join)
+
         success = results.all? do |run_result|
           run_result.values.all? {|suite_result| suite_result['result'] == "passed"}
         end
@@ -42,7 +60,7 @@ module Sauce
       end
 
       def teardown
-        puts "tearing down tunnel"
+        puts "Shutting down Sauce Connect..."
         @tunnel.disconnect
       end
 

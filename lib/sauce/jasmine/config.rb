@@ -12,7 +12,7 @@ module Sauce
       end
 
       def quiet_tunnel?
-        false
+        true
       end
     end
   end
