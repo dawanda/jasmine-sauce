@@ -4,18 +4,15 @@ require 'sauce/jasmine/selenium_driver'
 module Sauce
   module Jasmine
     class Config < ::Jasmine::Config
-      attr_accessor :sauce_connect, :os, :browser, :browser_version
-      attr_writer :base_url
+      attr_accessor :tunnel_domain
 
       def initialize
         sauce_connect = true
+        @tunnel_domain = "#{rand(10000)}.jasmine.test"
       end
 
-      def start
-        start_jasmine_server if sauce_connect
-        @client = Sauce::Jasmine::SeleniumDriver.new(browser, os, browser_version, jasmine_host,
-                                                     @jasmine_server_port, sauce_connect, @base_url)
-        @client.connect
+      def quiet_tunnel?
+        false
       end
     end
   end
