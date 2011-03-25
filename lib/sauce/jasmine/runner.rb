@@ -35,10 +35,10 @@ module Sauce
           browser_string = browser_spec.join('/')
           Thread.new do
             begin
-              result = run_tests_in_browser(*browser_spec)
+              result, job_id = run_tests_in_browser(*browser_spec)
               puts "Suite finished on #{browser_string}"
               Thread.exclusive do
-                results[browser_string] = result
+                results[browser_string] = result, job_id
               end
             rescue => e
               results[browser_string] = e
@@ -47,24 +47,17 @@ module Sauce
         end
         threads.each(&:join)
 
-        success = results.all? do |run_result|
-          if run_result.respond_to? :values
-            run_result.values.all? {|suite_result| suite_result['result'] == "passed"}
-          else # exception
-            false
+        results.each do |browser_string, result|
+          if result.respond_to? :[]
+            actual_result, job_id = result
+            success = actual_result.values.all? {|suite_result| suite_result['result'] == "passed"}
+            if !success
+              puts "[FAILURE] Failure on #{browser_string}. See https://saucelabs.com/jobs/#{job_id} for details."
+              at_exit { exit!(1) }
+            end
+          else
+            raise result
           end
-        end
-        if success
-          puts "Success!"
-        else
-          puts "Failure:"
-          results.each do |browser_string, result|
-            puts "#{browser_string}:"
-            p result
-            puts
-            puts
-          end
-          at_exit { exit!(1) }
         end
       end
 
@@ -77,6 +70,7 @@ module Sauce
       def run_tests_in_browser(os, browser, browser_version)
         driver = SeleniumDriver.new(os, browser, browser_version, @config.tunnel_domain)
         driver.connect
+        job_id = driver.job_id
         begin
           while !driver.tests_have_finished?
             sleep 1.0
@@ -84,7 +78,7 @@ module Sauce
           result = driver.test_results
         ensure
           driver.disconnect
-          return result
+          return result, job_id
         end
       end
     end

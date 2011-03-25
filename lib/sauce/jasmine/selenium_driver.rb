@@ -24,6 +24,10 @@ module Sauce
       def test_results
         eval_js("var result = jsApiReporter.results(); if (window.Prototype && Object.toJSON) { Object.toJSON(result) } else { JSON.stringify(result) }")
       end
+
+      def job_id
+        @driver.session_id
+      end
     end
   end
 end
