@@ -38,7 +38,7 @@ module Sauce
               result = run_tests_in_browser(*browser_spec)
               puts "Suite finished on #{browser_string}"
               Thread.exclusive do
-                results[browser_string] << result
+                results[browser_string] = result
               end
             rescue => e
               results[browser_string] = e
