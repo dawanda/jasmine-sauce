@@ -12,7 +12,7 @@ module Sauce
       end
 
       def quiet_tunnel?
-        true
+        ENV['DEBUG'] != "true"
       end
     end
   end
