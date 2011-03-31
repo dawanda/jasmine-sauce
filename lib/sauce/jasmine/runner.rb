@@ -50,7 +50,7 @@ module Sauce
         results.each do |browser_string, result|
           if result.respond_to? :[]
             actual_result, job_id = result
-            success = actual_result.values.all? {|suite_result| suite_result['result'] == "passed"}
+            success = actual_result && actual_result.values.all? {|suite_result| suite_result['result'] == "passed"}
             if !success
               puts "[FAILURE] Failure on #{browser_string}. See https://saucelabs.com/jobs/#{job_id} for details."
               at_exit { exit!(1) }
