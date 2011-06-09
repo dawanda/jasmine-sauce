@@ -14,3 +14,8 @@ Getting Started
 3. bundle exec sauce config <YOUR_SAUCE_USENRAME> <YOUR_SAUCE_API_KEY>
 4. rails generate sauce:jasmine
 5. rake jasmine:ci:sauce
+
+Rails 2.3
+---------
+
+4. cp path/to/gems/jasmine-sauce/lib/generators/sauce/jasmine/templates/lib/tasks/jasmine-sauce.rake lib/tasks/
