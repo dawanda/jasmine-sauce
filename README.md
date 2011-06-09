@@ -18,4 +18,4 @@ Getting Started
 Rails 2.3
 ---------
 
-4. cp path/to/gems/jasmine-sauce/lib/generators/sauce/jasmine/templates/lib/tasks/jasmine-sauce.rake lib/tasks/
+4. `echo "\\nbegin; load 'sauce/jasmine/jasmine-sauce.rake'; rescue LoadError; end" >> Rakefile`
