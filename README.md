@@ -18,4 +18,4 @@ Getting Started
 Rails 2.3
 ---------
 
-4. `echo "\\nbegin; load 'sauce/jasmine/jasmine-sauce.rake'; rescue LoadError; end" >> Rakefile`
+4. `echo "begin; load 'sauce/jasmine/jasmine-sauce.rake'; rescue LoadError; end" >> Rakefile`
